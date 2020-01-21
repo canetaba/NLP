@@ -1,0 +1,43 @@
+# Fase 1: Preprocesamiento de los datos #
+* Importar el dataset
+* Crear el diccionario que mapea cada linea con su id
+* Crear una lista de todas las conversaciones
+* Obtener preguntas y respuestas separadamente
+* Simplificar y limpiar el texto usando Expresiones Regulares
+* Limpiar preguntas
+* Limpiar respuestas
+* Filtrar las preguntas y respuestas que son demasiado cortas o largas
+* Crear un diccionario que mapee cada palabra de acuerdo al numero de ocurrencias
+* Crear dos diccionarios que mapeen las palabras en las preguntas y las respuestas como un entero unico
+* Agregar los ultimos tokens sobre los dos diccionarios
+* Crear un diccionario inverso del diccionario de las respuestas_a_entero
+* Agregar el token <EOS> al final de cada respuesta
+* Traducir todas las preguntas y las respuestas a entero y reemplazar todas las palabras que fueron filtradas a la salida por el token <OUT>
+* Ordenar las preguntas y respuestas por el largo de las preguntas
+
+
+# Fase 2: Construir el modelo SEQ2SEQ #
+* Creating comodines para las entradas y los targets
+* Preprocesamiento de los targets
+* Creacion del encoder RNN
+* Decodificar el set de entrenamiento
+* Decodificar el set de test/validacion
+* Crear el decodificador RNN
+* Contruir el modelo seq2seq
+
+# Fase 3: Entrenando el modelo seq2seq #
+* Configuracion de hiperparametros
+* Definir una sesion
+* Cargar las entradas del modelo
+* Configurar el largo de la secuencia
+* Obtener la forma del tensor de entrada
+* Obtener las predicciones de entrenamiento y test
+* Configurar Loss Error, el optimizador y el gradient clipping
+* Separar los datos en cajas de preguntas y respuestas
+* Separar las preguntas y respuestas en conjuntos de train y test
+* Entrenar
+
+# Fase 4: Entrenar el modelo #
+* Cargar los pesos y ejecutar la sesion
+* Convertir las preguntas desde strings a listas de enteros codificadas
+* Configurar el chat
