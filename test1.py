@@ -1,10 +1,15 @@
+import gensim
 import pandas as pd
 import regex as re
 import nltk
 import numpy as np
 import logging # verbosidad (útil para saber qué está ocurriendo al ejecutar código)
 from nltk.chat.util import Chat, reflections
-
+import sklearn.ensemble # clasificador
+import sklearn.metrics # evaluar desempeño de clasificador
+import sklearn.model_selection # partición de conjuntos de entrenamiento - evaluación
+import matplotlib.pyplot as plt
+from sklearn.manifold import TSNE
 
 
 nltk.download('stopwords')
@@ -112,3 +117,34 @@ without_stopwords_respuestas = remover_stopWords(tokenized_respuestas)
 
 print (without_stopwords_preguntas)
 print (without_stopwords_respuestas)
+
+# Training the neural word embeddings word2vec
+model = gensim.models.Word2Vec(preguntas_normalizadas)
+
+model.wv.most_similar('a')
+
+X = model[model.wv.vocab]
+X.shape
+
+#calculo de TSNE
+tsne = TSNE(n_components=2)
+X_tsne = tsne.fit_transform(X)
+
+fig, ax = plt.subplots()
+i = 0
+for word in model.wv.vocab:
+    ax.annotate(word, (X_tsne[i, 0], X_tsne[i, 1]))
+    i = i + 1
+
+PADDING = 1.0
+x_axis_min = np.amin(X_tsne, axis=0)[0] - PADDING
+y_axis_min = np.amin(X_tsne, axis=0)[1] - PADDING
+x_axis_max = np.amax(X_tsne, axis=0)[0] + PADDING
+y_axis_max = np.amax(X_tsne, axis=0)[1] + PADDING
+
+plt.xlim(x_axis_min, x_axis_max)
+plt.ylim(y_axis_min, y_axis_max)
+
+# ax.annotate(model.wv.vocab.keys(), (X_tsne[:, 0], X_tsne[:, 1]))
+plt.rcParams["figure.figsize"] = (10, 10)
+plt.show()
