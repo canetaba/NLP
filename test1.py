@@ -26,7 +26,22 @@ def cargar_datos(archivo):
     return oraciones
 
 
+def separar(archivo):
+    # Separa preguntas de respuestas
+    aux_preg = []
+    aux_resp = []
+    for i in range(0, len(archivo)):
+        m = i
+        if m % 2:
+            aux_resp.append(archivo.get(i))
+        else:
+            aux_preg.append(archivo.get(i))
+    return(aux_preg,aux_resp)
+
+
+
 def limpiar_datos(text):
+    # Limpia el texto quitando tildes y reemplazando mayusculas por minusculas
     text = text.lower()  # Todo a minúsculas
     text = re.sub(r'[^A-Za-zñáéíóú]', ' ', text)  # Reemplaza todas los signos de puntuación por un espacio
     text = re.sub('á', 'a', text)  # Reemplaza las vocales con tilde por su forma basal
@@ -62,6 +77,8 @@ def remover_stopWords(arreglo):
         aux.append(aux_stopwords_palabra)
     return aux
 
+
+# Cargamos las coversaciones del archivo de texto
 ruta = "archivo_chico.txt"
 sentences = cargar_datos(ruta)
 print(sentences)
@@ -69,22 +86,13 @@ print(sentences)
 # Creamos un diccionario con la lista de conversaciones
 conversaciones = { i : sentences[i] for i in range(0, len(sentences) ) }
 
-
-preguntas = []
-respuestas = []
-for i in range(0, len(conversaciones)):
-    m = i
-    if m%2:
-        respuestas.append(conversaciones.get(i))
-    else:
-        preguntas.append(conversaciones.get(i))
-
-print ("Preguntas: ", preguntas)
-print("Respuestas ", respuestas)
+# Separamos las preguntas de las respuestas
+preguntas , respuestas = separar(conversaciones)
+# print ("Preguntas: ", preguntas)
+# print("Respuestas ", respuestas)
 
 
-
-# Limpiamos los datos
+# Limpieza de datos
 # Normalizamos las preguntas y las respuestas
 preguntas_normalizadas = [limpiar_datos(pregunta) for pregunta in preguntas]
 #print(preguntas_normalizadas)
@@ -99,12 +107,8 @@ tokenized_respuestas = tokeniza(respuestas_normalizadas)
 # print(tokenized_respuestas)
 
 # Removemos las stopwords
-without_stopwords_preguntas = []
-without_stopwords_respuestas = []
-
 without_stopwords_preguntas = remover_stopWords(tokenized_preguntas)
 without_stopwords_respuestas = remover_stopWords(tokenized_respuestas)
-
 
 print (without_stopwords_preguntas)
 print (without_stopwords_respuestas)
