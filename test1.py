@@ -3,6 +3,8 @@ import regex as re
 import nltk
 import numpy as np
 import logging # verbosidad (útil para saber qué está ocurriendo al ejecutar código)
+from nltk.chat.util import Chat, reflections
+
 
 
 nltk.download('stopwords')
@@ -46,6 +48,20 @@ def vectorizer(text, model):
     return(np.mean(vectors,axis=0))
 
 
+def tokeniza(sentencias):
+    # Tokenizamos las palabras
+    arreglo = []
+    arreglo = [nltk.word_tokenize(sentencia) for sentencia in sentencias]
+    return arreglo
+
+def remover_stopWords(arreglo):
+    # Remueve las stopwords
+    aux = []
+    for palabra in arreglo:
+        aux_stopwords_palabra = [word for word in palabra if word not in stopwords]
+        aux.append(aux_stopwords_palabra)
+    return aux
+
 ruta = "archivo_chico.txt"
 sentences = cargar_datos(ruta)
 print(sentences)
@@ -76,10 +92,9 @@ preguntas_normalizadas = [limpiar_datos(pregunta) for pregunta in preguntas]
 respuestas_normalizadas = [limpiar_datos(respuesta) for respuesta in respuestas]
 #print(respuestas_normalizadas)
 
-
 # Tokenizamos
-tokenized_preguntas = [nltk.word_tokenize(pregunta) for pregunta in preguntas_normalizadas]
-tokenized_respuestas = [nltk.word_tokenize(respuesta) for respuesta in respuestas_normalizadas]
+tokenized_preguntas = tokeniza(preguntas_normalizadas)
+tokenized_respuestas = tokeniza(respuestas_normalizadas)
 # print(tokenized_preguntas)
 # print(tokenized_respuestas)
 
@@ -87,13 +102,9 @@ tokenized_respuestas = [nltk.word_tokenize(respuesta) for respuesta in respuesta
 without_stopwords_preguntas = []
 without_stopwords_respuestas = []
 
-for palabra in tokenized_preguntas:
-    without_stopwords_palabra = [word for word in palabra if word not in stopwords]
-    without_stopwords_preguntas.append(without_stopwords_palabra)
+without_stopwords_preguntas = remover_stopWords(tokenized_preguntas)
+without_stopwords_respuestas = remover_stopWords(tokenized_respuestas)
 
-for palabra in tokenized_respuestas:
-    without_stopwords_palabra = [word for word in palabra if word not in stopwords]
-    without_stopwords_respuestas.append(without_stopwords_palabra)
 
 print (without_stopwords_preguntas)
 print (without_stopwords_respuestas)
