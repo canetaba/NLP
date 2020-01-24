@@ -2,3 +2,6 @@ pandas
 regex
 nltk
 numpy
+gensim
+sklearn
+keras
