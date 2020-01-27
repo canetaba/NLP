@@ -115,36 +115,47 @@ tokenized_respuestas = tokeniza(respuestas_normalizadas)
 without_stopwords_preguntas = remover_stopWords(tokenized_preguntas)
 without_stopwords_respuestas = remover_stopWords(tokenized_respuestas)
 
-print (without_stopwords_preguntas)
-print (without_stopwords_respuestas)
+print (tokenized_preguntas)
+
+def dejar_uno_solo(ayuda):
+    piti = []
+    for hola in tokenized_preguntas:
+        for i in hola:
+            print(i)
+            piti.append(i)
+    return piti
+
+
+auxiliar = dejar_uno_solo(tokenized_preguntas)
+print(auxiliar)
 
 # Training the neural word embeddings word2vec
-model = gensim.models.Word2Vec(preguntas_normalizadas)
+model = gensim.models.Word2Vec(auxiliar)
 
-model.wv.most_similar('a')
+model.wv.most_similar('le')
 
-X = model[model.wv.vocab]
-X.shape
+#X = model[model.wv.vocab]
+#X.shape
 
 #calculo de TSNE
-tsne = TSNE(n_components=2)
-X_tsne = tsne.fit_transform(X)
+#tsne = TSNE(n_components=2)
+#X_tsne = tsne.fit_transform(X)
 
-fig, ax = plt.subplots()
-i = 0
-for word in model.wv.vocab:
-    ax.annotate(word, (X_tsne[i, 0], X_tsne[i, 1]))
-    i = i + 1
+#fig, ax = plt.subplots()
+#i = 0
+#for word in model.wv.vocab:
+    #    ax.annotate(word, (X_tsne[i, 0], X_tsne[i, 1]))
+#    i = i + 1
 
-PADDING = 1.0
-x_axis_min = np.amin(X_tsne, axis=0)[0] - PADDING
-y_axis_min = np.amin(X_tsne, axis=0)[1] - PADDING
-x_axis_max = np.amax(X_tsne, axis=0)[0] + PADDING
-y_axis_max = np.amax(X_tsne, axis=0)[1] + PADDING
+#PADDING = 1.0
+#x_axis_min = np.amin(X_tsne, axis=0)[0] - PADDING
+#y_axis_min = np.amin(X_tsne, axis=0)[1] - PADDING
+#x_axis_max = np.amax(X_tsne, axis=0)[0] + PADDING
+#y_axis_max = np.amax(X_tsne, axis=0)[1] + PADDING
 
-plt.xlim(x_axis_min, x_axis_max)
-plt.ylim(y_axis_min, y_axis_max)
+#plt.xlim(x_axis_min, x_axis_max)
+#plt.ylim(y_axis_min, y_axis_max)
 
 # ax.annotate(model.wv.vocab.keys(), (X_tsne[:, 0], X_tsne[:, 1]))
-plt.rcParams["figure.figsize"] = (10, 10)
-plt.show()
+#plt.rcParams["figure.figsize"] = (10, 10)
+#plt.show()

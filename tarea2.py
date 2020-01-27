@@ -94,6 +94,8 @@ def remover_stopWords(arreglo):
     return aux
 
 
+
+
 # Cargamos las coversaciones del archivo de texto
 ruta = "archivo_chico.txt"
 sentences = cargar_datos(ruta)
