@@ -39,7 +39,7 @@ def separar(archivo):
     aux_resp = []
     orden_preg = []
     orden_resp =[]
-    data = pd.DataFrame(columns=['orden_preg', 'preg','ord_resp','resp'])
+    data = pd.DataFrame({'orden_preg':orden_preg, 'preg':aux_preg,'ord_resp':orden_resp,'resp':aux_resp})
     for i in range(0, len(archivo)):
         m = i
         if m % 2:
@@ -52,22 +52,20 @@ def separar(archivo):
     data['orden_preg'] = orden_preg
     data['preg'] = aux_preg
     data['ord_resp'] = orden_resp
-    data['resp'] = orden_resp
+    data['resp'] = aux_resp
 
     return data
 
 
 
-def limpiar_datos(text):
-    # Limpia el texto quitando tildes y reemplazando mayusculas por minusculas
-    text = text.lower()  # Todo a minúsculas
-    text = re.sub(r'[^A-Za-zñáéíóú]', ' ', text)  # Reemplaza todas los signos de puntuación por un espacio
-    text = re.sub('á', 'a', text)  # Reemplaza las vocales con tilde por su forma basal
-    text = re.sub('é', 'e', text)
-    text = re.sub('í', 'i', text)
-    text = re.sub('ó', 'o', text)
-    text = re.sub('ú', 'u', text)
-    return text
+def limpiar_datos(hola, nombre):
+    hola[nombre] = hola[nombre].str.replace(u"á", "a")
+    hola[nombre] = hola[nombre].str.replace(u"é", "e")
+    hola[nombre] = hola[nombre].str.replace(u"í", "i")
+    hola[nombre] = hola[nombre].str.replace(u"ó", "o")
+    hola[nombre] = hola[nombre].str.replace(u"ú", "u")
+    return hola
+
 
 
 def vectorizer(text, model):
@@ -99,11 +97,26 @@ def remover_stopWords(arreglo):
 # Cargamos las coversaciones del archivo de texto
 ruta = "archivo_chico.txt"
 sentences = cargar_datos(ruta)
-print(sentences)
 
-datos = separar(sentences)
 
-print(datos)
+conversaciones = { i : sentences[i] for i in range(0, len(sentences) ) }
+
+datos = separar(conversaciones)
+
+
+datos['preg'] = datos['preg'].astype('str')
+datos['resp'] = datos['resp'].astype('str')
+
+
+datos['preg'] = datos['preg'].str.lower()
+datos['resp'] = datos['resp'].str.lower()
+
+datos= limpiar_datos(datos, 'preg')
+datos= limpiar_datos(datos, 'resp')
+
+print(datos.head(1))
+
+
 
 
 
