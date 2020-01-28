@@ -14,7 +14,7 @@ from sklearn.manifold import TSNE
 
 nltk.download('stopwords')
 nltk.download('punkt')
-stopwords = nltk.corpus.stopwords.words('spanish')
+#stopwords = nltk.corpus.stopwords.words('spanish')
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
@@ -75,6 +75,12 @@ def tokeniza(sentencias):
     return arreglo
 
 def remover_stopWords(arreglo):
+    stopwords = ['de', 'para', 'el', 'ella','la',
+                 'los', 'las', 'es', 'lo','o','a',
+                 'y','ya','le','que', 'una', 'un',
+                 'con','se','por','mi','del','te','me','al','tu',
+                 'en','su','pero', 'entre', 'sin', 'embargo',
+                 'ni','les','nos','mas','ey','aj','oh']
     # Remueve las stopwords
     aux = []
     for palabra in arreglo:
@@ -83,56 +89,64 @@ def remover_stopWords(arreglo):
     return aux
 
 
-# Cargamos las coversaciones del archivo de texto
-ruta = "archivo_chico.txt"
-sentences = cargar_datos(ruta)
-print(sentences)
-
-# Creamos un diccionario con la lista de conversaciones
-conversaciones = { i : sentences[i] for i in range(0, len(sentences) ) }
-
-# Separamos las preguntas de las respuestas
-preguntas , respuestas = separar(conversaciones)
-# print ("Preguntas: ", preguntas)
-# print("Respuestas ", respuestas)
-
-
-# Limpieza de datos
-# Normalizamos las preguntas y las respuestas
-preguntas_normalizadas = [limpiar_datos(pregunta) for pregunta in preguntas]
-#print(preguntas_normalizadas)
-
-respuestas_normalizadas = [limpiar_datos(respuesta) for respuesta in respuestas]
-#print(respuestas_normalizadas)
-
-# Tokenizamos
-tokenized_preguntas = tokeniza(preguntas_normalizadas)
-tokenized_respuestas = tokeniza(respuestas_normalizadas)
-# print(tokenized_preguntas)
-# print(tokenized_respuestas)
-
-# Removemos las stopwords
-without_stopwords_preguntas = remover_stopWords(tokenized_preguntas)
-without_stopwords_respuestas = remover_stopWords(tokenized_respuestas)
-
-print (tokenized_preguntas)
-
 def dejar_uno_solo(ayuda):
     piti = []
-    for hola in tokenized_preguntas:
+    for hola in ayuda:
         for i in hola:
             print(i)
             piti.append(i)
     return piti
 
 
-auxiliar = dejar_uno_solo(tokenized_preguntas)
-print(auxiliar)
+# Cargamos las coversaciones del archivo de texto
+ruta = "archivo_chico.txt"
+sentences = cargar_datos(ruta)
+
+# Creamos un diccionario con la lista de conversaciones
+conversaciones = { i : sentences[i] for i in range(0, len(sentences) ) }
+
+# Separamos las preguntas de las respuestas
+preguntas , respuestas = separar(conversaciones)
+
+
+
+# Limpieza de datos
+# Normalizamos las preguntas y las respuestas
+preguntas_normalizadas = [limpiar_datos(pregunta) for pregunta in preguntas]
+respuestas_normalizadas = [limpiar_datos(respuesta) for respuesta in respuestas]
+
+# Tokenizamos
+tokenized_preguntas = tokeniza(preguntas_normalizadas)
+tokenized_respuestas = tokeniza(respuestas_normalizadas)
+
+# Removemos las stopwords
+without_stopwords_preguntas = remover_stopWords(tokenized_preguntas)
+without_stopwords_respuestas = remover_stopWords(tokenized_respuestas)
+
+print(without_stopwords_preguntas)
+WINDOW_SIZE = 2
+
+data = []
+for sentence in without_stopwords_preguntas:
+    for idx, word in enumerate(sentence):
+        # Acá se toma una ventana de -WINDOWS_SIZE, WINDOWS_SIZE para generar el skip gram. Dado que las
+        # frases son cortas, se utiliza min y max para tener cuidado con los límites de la frase.
+        # Además, el +1 en el límite superior es para considerar el índice de la propia palabra en cuestión
+        # (probar qué ocurre cuando se elimina dicho +1)
+        for neighbor in sentence[max(idx - WINDOW_SIZE, 0) : min(idx + WINDOW_SIZE, len(sentence)) + 1]:
+            if neighbor != word:
+                data.append([word, neighbor])
+
+print(data)
+
+
+
+#print(tokenized_preguntas)
 
 # Training the neural word embeddings word2vec
-model = gensim.models.Word2Vec(auxiliar)
+#model = gensim.models.Word2Vec(auxiliar)
 
-model.wv.most_similar('le')
+#model.wv.most_similar('le')
 
 #X = model[model.wv.vocab]
 #X.shape
