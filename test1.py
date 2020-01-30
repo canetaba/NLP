@@ -1,20 +1,11 @@
-import gensim
 import pandas as pd
 import regex as re
 import nltk
 import numpy as np
-import logging # verbosidad (útil para saber qué está ocurriendo al ejecutar código)
-from nltk.chat.util import Chat, reflections
-import sklearn.ensemble # clasificador
-import sklearn.metrics # evaluar desempeño de clasificador
-import sklearn.model_selection # partición de conjuntos de entrenamiento - evaluación
-import matplotlib.pyplot as plt
-from sklearn.manifold import TSNE
-
+import logging # verbosidad (útil para saber qué está ocurriendo al ejecutar código
 
 nltk.download('stopwords')
 nltk.download('punkt')
-#stopwords = nltk.corpus.stopwords.words('spanish')
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
@@ -80,7 +71,7 @@ def remover_stopWords(arreglo):
                  'y','ya','le','que', 'una', 'un',
                  'con','se','por','mi','del','te','me','al','tu',
                  'en','su','pero', 'entre', 'sin', 'embargo',
-                 'ni','les','nos','mas','ey','aj','oh']
+                 'ni','les','nos','mas','ey','aj','oh','es']
     # Remueve las stopwords
     aux = []
     for palabra in arreglo:
@@ -93,22 +84,19 @@ def dejar_uno_solo(ayuda):
     piti = []
     for hola in ayuda:
         for i in hola:
-            print(i)
             piti.append(i)
     return piti
 
 
 # Cargamos las coversaciones del archivo de texto
 ruta = "archivo_chico.txt"
-sentences = cargar_datos(ruta)
+corpus = cargar_datos(ruta)
 
 # Creamos un diccionario con la lista de conversaciones
-conversaciones = { i : sentences[i] for i in range(0, len(sentences) ) }
+conversaciones = { i : corpus[i] for i in range(0, len(corpus) ) }
 
 # Separamos las preguntas de las respuestas
 preguntas , respuestas = separar(conversaciones)
-
-
 
 # Limpieza de datos
 # Normalizamos las preguntas y las respuestas
@@ -123,53 +111,9 @@ tokenized_respuestas = tokeniza(respuestas_normalizadas)
 without_stopwords_preguntas = remover_stopWords(tokenized_preguntas)
 without_stopwords_respuestas = remover_stopWords(tokenized_respuestas)
 
-print(without_stopwords_preguntas)
-WINDOW_SIZE = 2
-
-data = []
-for sentence in without_stopwords_preguntas:
-    for idx, word in enumerate(sentence):
-        # Acá se toma una ventana de -WINDOWS_SIZE, WINDOWS_SIZE para generar el skip gram. Dado que las
-        # frases son cortas, se utiliza min y max para tener cuidado con los límites de la frase.
-        # Además, el +1 en el límite superior es para considerar el índice de la propia palabra en cuestión
-        # (probar qué ocurre cuando se elimina dicho +1)
-        for neighbor in sentence[max(idx - WINDOW_SIZE, 0) : min(idx + WINDOW_SIZE, len(sentence)) + 1]:
-            if neighbor != word:
-                data.append([word, neighbor])
-
-print(data)
 
 
 
-#print(tokenized_preguntas)
 
-# Training the neural word embeddings word2vec
-#model = gensim.models.Word2Vec(auxiliar)
 
-#model.wv.most_similar('le')
 
-#X = model[model.wv.vocab]
-#X.shape
-
-#calculo de TSNE
-#tsne = TSNE(n_components=2)
-#X_tsne = tsne.fit_transform(X)
-
-#fig, ax = plt.subplots()
-#i = 0
-#for word in model.wv.vocab:
-    #    ax.annotate(word, (X_tsne[i, 0], X_tsne[i, 1]))
-#    i = i + 1
-
-#PADDING = 1.0
-#x_axis_min = np.amin(X_tsne, axis=0)[0] - PADDING
-#y_axis_min = np.amin(X_tsne, axis=0)[1] - PADDING
-#x_axis_max = np.amax(X_tsne, axis=0)[0] + PADDING
-#y_axis_max = np.amax(X_tsne, axis=0)[1] + PADDING
-
-#plt.xlim(x_axis_min, x_axis_max)
-#plt.ylim(y_axis_min, y_axis_max)
-
-# ax.annotate(model.wv.vocab.keys(), (X_tsne[:, 0], X_tsne[:, 1]))
-#plt.rcParams["figure.figsize"] = (10, 10)
-#plt.show()
